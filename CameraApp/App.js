@@ -1,27 +1,21 @@
-import { StyleSheet, Text, View, Button, TouchableOpacity, Image, savePicture } from 'react-native';
-import { CameraView, CameraType, useCameraPermissions }  from 'expo-camera';
+import { StyleSheet, Text, View, Button, TouchableOpacity, Image } from 'react-native';
+import { CameraView, useCameraPermissions } from 'expo-camera'; // Removed CameraType import
 import * as MediaLibrary from 'expo-media-library';
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useRef } from 'react';
 
 export default function App() {
-  //getting permission, using a react hook to change the persmissions
   const [permission, requestPermission] = useCameraPermissions();
-  //setting up the image to display, and using react hook to change image
   const [image, setImage] = useState(null);
-  const [facing, setFacing] = useState('back');
-  const [flash, setFlash] = useState('off')
+  const [facing, setFacing] = useState('back'); // Initialize with 'back'
+  const [flash, setFlash] = useState('off');
   const cameraRef = useRef(null);
-  const [albums, setAlbums] = useState(null)
   const [permissionResponse, requestPermissions] = MediaLibrary.usePermissions();
 
-
   if (!permission) {
-    // Camera permissions are still loading.
     return <View />;
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
         <Text style={styles.message}>We need your permission to show the camera</Text>
@@ -31,28 +25,26 @@ export default function App() {
   }
 
   if (!permissionResponse) {
-    // Camera permissions are still loading.
     return <View />;
   }
 
   if (!permissionResponse.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>We need your permission to show the camera</Text>
+        <Text style={styles.message}>We need your permission to save photos</Text>
         <Button onPress={requestPermissions} title="grant permission" />
       </View>
     );
   }
 
   function toggleCameraFacing() {
-    setFacing(current => (current === 'back' ? 'front' : 'back'));
+    setFacing((current) => (current === 'back' ? 'front' : 'back')); // Toggle using string literals
   }
 
   async function takePicture() {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
-      setImage(photo.uri); // Set the captured image URI to state
+      setImage(photo.uri);
       console.log('Photo taken:', photo.uri);
     }
   }
@@ -76,7 +68,7 @@ export default function App() {
         <CameraView
           ref={cameraRef}
           style={styles.camera}
-          type={facing}
+          type={facing} // Use 'back' or 'front'
           flashMode={flash}
         >
           <View style={styles.buttonContainer}>
