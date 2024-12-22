@@ -1,7 +1,10 @@
-import { StyleSheet, Text, View, Button, TouchableOpacity, Image, savePicture } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity, Image} from 'react-native';
 import { CameraView, CameraType, useCameraPermissions }  from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import React, {useState, useEffect, useRef} from 'react';
+import FilterBar from './FilterBar';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import Entypo from '@expo/vector-icons/Entypo';
 
 export default function App() {
   //getting permission, using a react hook to change the persmissions
@@ -46,7 +49,7 @@ export default function App() {
   }
 
   function toggleCameraFacing() {
-    setFacing(current => (current === 'back' ? 'front' : 'back'));
+    setFacing((current) => (current === 'back' ? 'front' : 'back'));
   }
 
   async function takePicture() {
@@ -68,65 +71,41 @@ export default function App() {
     <View style={styles.container}>
       {image ? (
         <View style={styles.previewContainer}>
-          <Image source={{ uri: image }} style={styles.preview} />
-          <Button title="Save Photo" onPress={savePicture} />
+          <Image source={{ uri: image}} style={styles.preview} />
+          <FilterBar 
+          onSave={savePicture}
+          />
           <Button title="Retake Photo" onPress={() => setImage(null)} />
         </View>
+        
       ) : (
+        <>
+        <View style={styles.flipButtonContainer}>
+        <TouchableOpacity style={styles.flipButton} onPress={toggleCameraFacing}>
+          <Ionicons name="camera-reverse" size={32} color="white"/>
+        </TouchableOpacity>
+        </View>
         <CameraView
           ref={cameraRef}
           style={styles.camera}
-          type={facing}
+          facing={facing}
           flashMode={flash}
         >
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-              <Text style={styles.text}>Flip</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={takePicture}>
-              <Text style={styles.text}>Snap</Text>
+            <TouchableOpacity onPress={takePicture}>
+              <Entypo name="circle" size={85} color="white" />
             </TouchableOpacity>
           </View>
         </CameraView>
+        </>
       )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#000',
-  },
-  message: {
-    textAlign: 'center',
-    paddingBottom: 10,
-    color: 'white',
-  },
-  camera: {
-    flex: 1,
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: 'transparent',
-    justifyContent: 'space-around',
-    alignItems: 'flex-end',
-    marginBottom: 20,
-  },
-  button: {
-    flex: 0.3,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    padding: 10,
-    borderRadius: 5,
-  },
-  text: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000',
+  flipButtonContainer: {
+    zIndex: 10,
   },
   previewContainer: {
     flex: 1,
@@ -134,10 +113,53 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#000',
   },
+
   preview: {
     width: '90%',
     height: '70%',
     borderRadius: 10,
     marginBottom: 20,
+  },
+
+  container: {
+      flex: 1,
+      backgroundColor: '#000',
+  },
+  flipButton: {
+      position: 'absolute',
+      top: 50,
+      left: 40,
+      borderRadius: 5,
+  },
+  flipText: {
+      fontSize: 16,
+      color: '#000',
+      fontWeight: 'bold',
+  },
+  camera: {
+      flex: 1,
+      borderRadius: 10,
+      overflow: 'hidden', 
+  },
+  buttonContainer: {
+    position: 'absolute', 
+    bottom: '5%',             
+    left: '9%',           
+    transform: [{ translateX: -35 }], 
+    width: '100%',
+    alignItems: 'center',   
+  },
+  snapButton: {
+      backgroundColor: 'white',
+      width: 70,
+      height: 70,
+      borderRadius: 35,
+      justifyContent: 'center',
+      alignItems: 'center',
+  },
+  snapText: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: 'black',
   },
 });
