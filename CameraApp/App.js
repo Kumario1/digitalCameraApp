@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, Button, TouchableOpacity, Image} from 'react-native';
-import { CameraView, CameraType, useCameraPermissions }  from 'expo-camera';
+import { StyleSheet, Text, View, Button, TouchableOpacity, Image, Alert} from 'react-native';
+import { CameraView, CameraType, useCameraPermissions}  from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import React, {useState, useEffect, useRef} from 'react';
 import FilterBar from './FilterBar';
@@ -54,7 +54,10 @@ export default function App() {
 
   async function takePicture() {
     if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync();
+      const photo = await cameraRef.current.takePictureAsync({
+        quality:1.0,
+        skipProcessing: true,
+      });
       setImage(photo.uri); // Set the captured image URI to state
       console.log('Photo taken:', photo.uri);
     }
@@ -67,6 +70,19 @@ export default function App() {
     }
   }
 
+    const confirmActionAlert = () =>
+      Alert.alert("Confirm", "Are you sure you want to go back?", [
+        {
+          text: "Yes",
+          onPress: () => setImage(null),
+          style: 'default',
+        },
+        {
+          text: "Cancel",
+          style: 'cancel',
+        }
+      ]);
+
   return (
     <View style={styles.container}>
       {image ? (
@@ -74,8 +90,8 @@ export default function App() {
           <Image source={{ uri: image}} style={styles.preview} />
           <FilterBar 
           onSave={savePicture}
+          resetImg={confirmActionAlert}
           />
-          <Button title="Retake Photo" onPress={() => setImage(null)} />
         </View>
         
       ) : (
@@ -93,7 +109,7 @@ export default function App() {
         >
           <View style={styles.buttonContainer}>
             <TouchableOpacity onPress={takePicture}>
-              <Entypo name="circle" size={85} color="white" />
+              <Entypo name="circle" size={90} color="white" />
             </TouchableOpacity>
           </View>
         </CameraView>
@@ -111,13 +127,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000',
+    backgroundColor: '#3333',
   },
 
   preview: {
-    width: '90%',
+    width: '100%',
     height: '70%',
-    borderRadius: 10,
     marginBottom: 20,
   },
 
