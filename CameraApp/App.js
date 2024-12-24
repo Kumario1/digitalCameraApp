@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Button, TouchableOpacity, Image, Alert} from 'react-native';
-import { CameraView, CameraType, useCameraPermissions}  from 'expo-camera';
+import { CameraView, CameraType, useCameraPermissions, Camera}  from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import React, {useState, useEffect, useRef} from 'react';
 import FilterBar from './FilterBar';
@@ -52,6 +52,14 @@ export default function App() {
     setFacing((current) => (current === 'back' ? 'front' : 'back'));
   }
 
+  function toggleCameraFlash() {
+    setFlash(
+      flash === 'off'
+      ? 'on'
+      : 'off'
+    );
+  }
+
   async function takePicture() {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync({
@@ -100,15 +108,18 @@ export default function App() {
         <TouchableOpacity style={styles.flipButton} onPress={toggleCameraFacing}>
           <Ionicons name="camera-reverse" size={32} color="white"/>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.flashButton} onPress={toggleCameraFlash}>
+          <Ionicons name="flash-outline" size={28} color="white"/>
+        </TouchableOpacity>
         </View>
         <CameraView
           ref={cameraRef}
           style={styles.camera}
           facing={facing}
-          flashMode={flash}
+          flash={flash}
         >
           <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={takePicture}>
+            <TouchableOpacity onPress={takePicture} style={styles.pictureButton}>
               <Entypo name="circle" size={90} color="white" />
             </TouchableOpacity>
           </View>
@@ -122,6 +133,9 @@ export default function App() {
 const styles = StyleSheet.create({
   flipButtonContainer: {
     zIndex: 10,
+    backgroundColor: '#000000',
+    height: '12%',
+    width: '100%',
   },
   previewContainer: {
     flex: 1,
@@ -143,9 +157,15 @@ const styles = StyleSheet.create({
   flipButton: {
       position: 'absolute',
       top: 50,
-      left: 40,
+      left: 30,
       borderRadius: 5,
   },
+  flashButton: {
+    position: 'absolute',
+    top: 53,
+    left: 73,
+    borderRadius: 5,
+},
   flipText: {
       fontSize: 16,
       color: '#000',
@@ -154,15 +174,20 @@ const styles = StyleSheet.create({
   camera: {
       flex: 1,
       borderRadius: 10,
-      overflow: 'hidden', 
+      overflow: 'hidden',
   },
   buttonContainer: {
     position: 'absolute', 
-    bottom: '5%',             
+    bottom: '0%',             
     left: '9%',           
     transform: [{ translateX: -35 }], 
     width: '100%',
-    alignItems: 'center',   
+    height: '20%',
+    alignItems: 'center',
+    backgroundColor: '#000000'   
+  },
+  pictureButton: {
+    marginTop: 10
   },
   snapButton: {
       backgroundColor: 'white',
