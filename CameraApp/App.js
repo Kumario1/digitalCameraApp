@@ -109,7 +109,12 @@ export default function App() {
           <Ionicons name="camera-reverse" size={32} color="white"/>
         </TouchableOpacity>
         <TouchableOpacity style={styles.flashButton} onPress={toggleCameraFlash}>
-          <Ionicons name="flash-outline" size={28} color="white"/>
+          <Ionicons name=
+          {flash === 'on'
+              ? 'flash-outline'
+              : 'flash-off-outline'
+          } 
+          size={28} color="white"/>
         </TouchableOpacity>
         </View>
         <CameraView
@@ -120,7 +125,7 @@ export default function App() {
         >
           <View style={styles.buttonContainer}>
             <TouchableOpacity onPress={takePicture} style={styles.pictureButton}>
-              <Entypo name="circle" size={90} color="white" />
+              <Ionicons name="radio-button-on-outline" size={95} color="white" />
             </TouchableOpacity>
           </View>
         </CameraView>
@@ -179,9 +184,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     position: 'absolute', 
     bottom: '0%',             
-    left: '9%',           
+    left: '7%',           
     transform: [{ translateX: -35 }], 
-    width: '100%',
+    width: '105%',
     height: '20%',
     alignItems: 'center',
     backgroundColor: '#000000'   
