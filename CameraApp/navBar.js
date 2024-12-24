@@ -1,23 +1,22 @@
 import React from 'react';
 import {View, FlatList, StyleSheet, Text, StatusBar, ScrollView, Touchable, TouchableOpacity} from 'react-native';
-import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-export default function navBar({onApplyFilter}) {
+export default function navBar({applyFilter}) {
     const filters = [
         {name: 'Grayscale', effect: 'grayscale'},
         {name: 'Sepia', effect: 'sepia'},
         {name: 'Saturate', effect: 'saturate'},
         {name: 'Brightness', effect: 'brightness'},
     ];
-
+    
     return (
         <View style={styles.sidebar}>
             {filters.map((filter, index) => (
                 <TouchableOpacity
                     key={index}
                     style={styles.button}
-                    onPress={() => onApplyFilter(filter.effect)}
+                    onPress={() => applyFilter(filter.effect)}
                 >
                     <Text style={styles.text}>{filter.name}</Text>
                 </TouchableOpacity>
@@ -32,7 +31,6 @@ const styles = StyleSheet.create({
       bottom: 20,
       height: 100,
       width: '100%',
-      backgroundColor: '#333',
       padding: 10,
       flexDirection: 'row',
       justifyContent: 'space-around',

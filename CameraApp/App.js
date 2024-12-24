@@ -4,7 +4,19 @@ import * as MediaLibrary from 'expo-media-library';
 import React, {useState, useEffect, useRef} from 'react';
 import FilterBar from './FilterBar';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import Entypo from '@expo/vector-icons/Entypo';
+import {
+  Grayscale,
+  Sepia,
+  Brightness,
+  Saturate,
+  Tint,
+  ColorMatrix,
+  concatColorMatrices,
+  invert,
+  contrast,
+  saturate
+} from 'react-native-color-matrix-image-filters'
+import NavBar from './navBar';
 
 export default function App() {
   //getting permission, using a react hook to change the persmissions
@@ -16,6 +28,7 @@ export default function App() {
   const cameraRef = useRef(null);
   const [albums, setAlbums] = useState(null)
   const [permissionResponse, requestPermissions] = MediaLibrary.usePermissions();
+  const [selectedFilter, setSelectedFilter] = useState(null);
 
 
   if (!permission) {
@@ -66,8 +79,10 @@ export default function App() {
         quality:1.0,
         skipProcessing: true,
       });
-      setImage(photo.uri); // Set the captured image URI to state
-      console.log('Photo taken:', photo.uri);
+      if (photo && photo.uri) {
+        setImage(photo.uri); // Update state with valid image URI
+        console.log('Photo URI:', photo.uri);
+      }
     }
   }
 
@@ -91,14 +106,59 @@ export default function App() {
         }
       ]);
 
+      const applyFilter = (filter) => {
+        console.log('Selected Filter:', filter);
+        setSelectedFilter(filter);
+      };
+      
+
+      const renderFilteredImage = () => {
+        if (!image) {
+          console.error('image is null or undefined');
+          return <Text>No image available</Text>;
+        }
+      
+        if (!selectedFilter) {
+          return <Image source={{ uri: image }} style={styles.preview} />;
+        }
+      
+        const filterMap = {
+          grayscale: (
+            <Grayscale key="grayscale" source={{ uri: image }} style={styles.preview}/>
+          ),
+          sepia: (
+            <Sepia key="sepia">
+              <Image source={{ uri: image }} style={styles.preview} />
+            </Sepia>
+          ),
+          inverted: (
+            <ColorMatrix key="inverted" matrix={invert()}>
+              <Image source={{ uri: image }} style={styles.preview} />
+            </ColorMatrix>
+          ),
+          combined: (
+            <ColorMatrix key="combined" matrix={concatColorMatrices(saturate(-0.9), contrast(5.2), invert())}>
+              <Image source={{ uri: image }} style={styles.preview} />
+            </ColorMatrix>
+          ),
+        };
+      
+        return filterMap[selectedFilter] || <Image source={{ uri: image }} style={styles.preview} />;
+      };
+      
+
+
   return (
     <View style={styles.container}>
       {image ? (
         <View style={styles.previewContainer}>
-          <Image source={{ uri: image}} style={styles.preview} />
+          <Image source={{ uri: image }} style={styles.preview} />
           <FilterBar 
           onSave={savePicture}
           resetImg={confirmActionAlert}
+          />
+          <NavBar
+            applyFilter={applyFilter}
           />
         </View>
         
@@ -153,6 +213,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '70%',
     marginBottom: 20,
+    backgroundColor: '#000',
   },
 
   container: {
