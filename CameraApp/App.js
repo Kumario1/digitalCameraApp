@@ -106,47 +106,46 @@ export default function App() {
         }
       ]);
 
-      const applyFilter = (filter) => {
-        console.log('Selected Filter:', filter);
-        setSelectedFilter(filter);
-      };
-      
-
-      const renderFilteredImage = () => {
+      async function applyFilter(filterType) {
         if (!image) {
-          console.error('image is null or undefined');
-          return <Text>No image available</Text>;
+          alert('No image available to apply filter!');
+          return;
         }
       
-        if (!selectedFilter) {
-          return <Image source={{ uri: image }} style={styles.preview} />;
+        try {
+          const formData = new FormData();
+          formData.append('image', {
+            uri: image,          // Use the image URI from the cache
+            name: 'photo.jpg',   // Give it a file name
+            type: 'image/jpeg',  // Set the MIME type
+          });
+          formData.append('filter', filterType); // The filter type (e.g., "grayscale")
+      
+          const response = await fetch('http://192.168.86.31:5000/apply-filter', {
+            method: 'POST',
+            body: formData,
+          });
+      
+          if (!response.ok) {
+            throw new Error(`Failed to apply filter: ${response.statusText}`);
+          }
+      
+          // Get the processed image from the server
+          const blob = await response.blob();
+      
+          // Convert the blob to a local URI for React Native
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setImage(reader.result); // Update the state with the filtered image URI
+          };
+          reader.readAsDataURL(blob);
+        } catch (error) {
+          console.error('Error applying filter:', error);
+          alert('Failed to apply filter. Please try again.');
         }
+      }
       
-        const filterMap = {
-          grayscale: (
-            <Grayscale key="grayscale" source={{ uri: image }} style={styles.preview}/>
-          ),
-          sepia: (
-            <Sepia key="sepia">
-              <Image source={{ uri: image }} style={styles.preview} />
-            </Sepia>
-          ),
-          inverted: (
-            <ColorMatrix key="inverted" matrix={invert()}>
-              <Image source={{ uri: image }} style={styles.preview} />
-            </ColorMatrix>
-          ),
-          combined: (
-            <ColorMatrix key="combined" matrix={concatColorMatrices(saturate(-0.9), contrast(5.2), invert())}>
-              <Image source={{ uri: image }} style={styles.preview} />
-            </ColorMatrix>
-          ),
-        };
       
-        return filterMap[selectedFilter] || <Image source={{ uri: image }} style={styles.preview} />;
-      };
-      
-
 
   return (
     <View style={styles.container}>

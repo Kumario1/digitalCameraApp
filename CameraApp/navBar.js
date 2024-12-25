@@ -3,22 +3,17 @@ import {View, FlatList, StyleSheet, Text, StatusBar, ScrollView, Touchable, Touc
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function navBar({applyFilter}) {
-    const filters = [
-        {name: 'Grayscale', effect: 'grayscale'},
-        {name: 'Sepia', effect: 'sepia'},
-        {name: 'Saturate', effect: 'saturate'},
-        {name: 'Brightness', effect: 'brightness'},
-    ];
+    const filters = ['grayscale', 'sepia', 'invert', 'brightness', 'contrast', 'saturate'];
     
     return (
         <View style={styles.sidebar}>
-            {filters.map((filter, index) => (
+            {filters.map((filter) => (
                 <TouchableOpacity
-                    key={index}
+                    key={filter}
                     style={styles.button}
-                    onPress={() => applyFilter(filter.effect)}
+                    onPress={() => applyFilter(filter)}
                 >
-                    <Text style={styles.text}>{filter.name}</Text>
+                    <Text style={styles.text}>{filter.toUpperCase()}</Text>
                 </TouchableOpacity>
             ))}
         </View>
