@@ -4,24 +4,14 @@ import * as MediaLibrary from 'expo-media-library';
 import React, {useState, useEffect, useRef} from 'react';
 import FilterBar from './FilterBar';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import {
-  Grayscale,
-  Sepia,
-  Brightness,
-  Saturate,
-  Tint,
-  ColorMatrix,
-  concatColorMatrices,
-  invert,
-  contrast,
-  saturate
-} from 'react-native-color-matrix-image-filters'
 import NavBar from './navBar';
+import * as FileSystem from 'expo-file-system';
 
 export default function App() {
   //getting permission, using a react hook to change the persmissions
   const [permission, requestPermission] = useCameraPermissions();
   //setting up the image to display, and using react hook to change image
+  const [originalImage, setOriginalImage] = useState(null);
   const [image, setImage] = useState(null);
   const [facing, setFacing] = useState('back');
   const [flash, setFlash] = useState('off')
@@ -80,6 +70,7 @@ export default function App() {
         skipProcessing: true,
       });
       if (photo && photo.uri) {
+        setOriginalImage(photo.uri)
         setImage(photo.uri); // Update state with valid image URI
         console.log('Photo URI:', photo.uri);
       }
@@ -87,9 +78,38 @@ export default function App() {
   }
 
   async function savePicture() {
-    if (image) {
-      await MediaLibrary.createAssetAsync(image);
+    if (!image) {
+      alert('No image available to save.');
+      return;
+    }
+  
+    try {
+      let fileUri = image;
+  
+      // Check if the image is Base64
+      if (!image.startsWith('file://')) {
+        console.log('Saving Base64 image to file system...');
+  
+        // Extract the Base64 data from the URI
+        const base64Data = image.split(',')[1]; // Remove "data:image/jpeg;base64,"
+  
+        // Generate a file path
+        fileUri = `${FileSystem.cacheDirectory}filtered-image.jpg`;
+  
+        // Write the Base64 data to the file system
+        await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+  
+        console.log('Image saved to file system at:', fileUri);
+      }
+  
+      // Save the file to the media library
+      await MediaLibrary.createAssetAsync(fileUri);
       alert('Photo saved to gallery!');
+    } catch (error) {
+      console.error('Error saving picture:', error);
+      alert('Failed to save picture. Please try again.');
     }
   }
 
@@ -107,7 +127,7 @@ export default function App() {
       ]);
 
       async function applyFilter(filterType) {
-        if (!image) {
+        if (!originalImage) {
           alert('No image available to apply filter!');
           return;
         }
@@ -115,7 +135,7 @@ export default function App() {
         try {
           const formData = new FormData();
           formData.append('image', {
-            uri: image,          // Use the image URI from the cache
+            uri: originalImage,          // Use the image URI from the cache
             name: 'photo.jpg',   // Give it a file name
             type: 'image/jpeg',  // Set the MIME type
           });
@@ -132,7 +152,7 @@ export default function App() {
       
           // Get the processed image from the server
           const blob = await response.blob();
-      
+
           // Convert the blob to a local URI for React Native
           const reader = new FileReader();
           reader.onloadend = () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, FlatList, StyleSheet, Text, StatusBar, ScrollView, Touchable, TouchableOpacity} from 'react-native';
+import {View, FlatList, StyleSheet, Text, StatusBar, ScrollView, Touchable, TouchableOpacity, SafeAreaView, SafeAreaProvider} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function navBar({applyFilter}) {
@@ -7,16 +7,19 @@ export default function navBar({applyFilter}) {
     
     return (
         <View style={styles.sidebar}>
+            <ScrollView horizontal={true}>
             {filters.map((filter) => (
-                <TouchableOpacity
-                    key={filter}
-                    style={styles.button}
-                    onPress={() => applyFilter(filter)}
-                >
-                    <Text style={styles.text}>{filter.toUpperCase()}</Text>
-                </TouchableOpacity>
-            ))}
+    <TouchableOpacity
+       key={filter}
+       style={styles.button}
+        onPress={() => applyFilter(filter)}
+    >
+        <Text style={styles.text}>{filter.toUpperCase()}</Text>
+    </TouchableOpacity>
+))}
+            </ScrollView>
         </View>
+                
     );
 }
 
@@ -32,6 +35,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
     },
     button: {
+        margin: 10,
       paddingVertical: 10,
       paddingHorizontal: 20,
       backgroundColor: '#555',
