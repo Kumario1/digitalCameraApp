@@ -3,7 +3,7 @@ import {View, FlatList, StyleSheet, Text, StatusBar, ScrollView, Touchable, Touc
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function navBar({applyFilter}) {
-    const filters = ['grayscale', 'sepia', 'invert', 'brightness', 'contrast', 'saturate'];
+    const filters = ['digicam', 'sepia', 'invert', 'brightness', 'contrast', 'saturate'];
     
     return (
         <View style={styles.sidebar}>
