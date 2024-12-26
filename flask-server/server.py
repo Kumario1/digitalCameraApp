@@ -389,7 +389,7 @@ def apply_filter(img, filter_type):
             color=(255,222,33)
             )
 
-            img = add_green_tint(img, 1.020)
+            img = add_green_tint(img, 1.023)
 
             brightness_enhancer = ImageEnhance.Brightness(img)
             img = brightness_enhancer.enhance(1.2)  # 1.2 => 20% brighter
