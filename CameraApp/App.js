@@ -126,6 +126,27 @@ export default function App() {
         }
       ]);
 
+      function uriToBase64(uri) {
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.onload = function() {
+            const reader = new FileReader();
+            reader.onloadend = function() {
+              resolve(reader.result.split(',')[1]); 
+              // split(',')[1] to remove the 'data:image/jpeg;base64,' prefix
+            };
+            reader.readAsDataURL(xhr.response);
+          };
+          xhr.onerror = function() {
+            reject(new Error('uriToBase64 failed'));
+          };
+          xhr.open('GET', uri);
+          xhr.responseType = 'blob';
+          xhr.send();
+        });
+      }
+      
+
       async function applyFilter(filterType) {
         if (!originalImage) {
           alert('No image available to apply filter!');
@@ -133,37 +154,51 @@ export default function App() {
         }
       
         try {
-          const formData = new FormData();
-          formData.append('image', {
-            uri: originalImage,          // Use the image URI from the cache
-            name: 'photo.jpg',   // Give it a file name
-            type: 'image/jpeg',  // Set the MIME type
-          });
-          formData.append('filter', filterType); // The filter type (e.g., "grayscale")
+          // 1) Convert image URI to base64
+          const base64ImageData = await uriToBase64(originalImage);
       
-          const response = await fetch('http://192.168.86.31:5000/apply-filter', {
+          // 2) Build the JSON object
+          const payload = {
+            image: base64ImageData,
+            filter: filterType
+          };
+      
+          // 3) Send as JSON to your Lambda endpoint
+          const response = await fetch('https://guqte763s5.execute-api.us-east-1.amazonaws.com/dev/', {
             method: 'POST',
-            body: formData,
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload),
           });
       
           if (!response.ok) {
             throw new Error(`Failed to apply filter: ${response.statusText}`);
           }
       
-          // Get the processed image from the server
-          const blob = await response.blob();
-
-          // Convert the blob to a local URI for React Native
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setImage(reader.result); // Update the state with the filtered image URI
-          };
-          reader.readAsDataURL(blob);
+          // 4) The Lambda returns a JSON body with "processed_image" (base64)
+          const responseData = await response.json();
+          if (!responseData.processed_image) {
+            throw new Error('No processed_image found in response.');
+          }
+      
+          // 5) Convert the base64 string back to a data URI for React Native to display
+          const base64String = responseData.processed_image;
+          // You can do something like:
+          //   data:image/jpeg;base64,<base64String>
+          // in order to display it in an <Image> component
+      
+          const dataUri = `data:image/jpeg;base64,${base64String}`;
+          setImage(dataUri); 
+          // setImage is your state setter that puts this data in an <Image> component source
+          // e.g. <Image source={{ uri: dataUri }} />
+      
         } catch (error) {
           console.error('Error applying filter:', error);
           alert('Failed to apply filter. Please try again.');
         }
       }
+      
       
       
 
