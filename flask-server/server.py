@@ -448,29 +448,25 @@ def apply_filter(img, filter_type):
 
 @app.route('/apply-filter', methods=['POST'])
 def upload_and_filter():
-    if 'image' not in request.files:
-        return jsonify({'error': 'No image file found in the request'}), 400
-    if 'filter' not in request.form:
-        return jsonify({'error': 'No filter specified in the request'}), 400
-
-    file = request.files['image']
-    filter_type = request.form['filter']
     try:
-        # Always reload the original image for each request
-        img = ImageOps.exif_transpose(Image.open(file.stream))
+        print('Request received:', request.files, request.form)
+        if 'image' not in request.files:
+            return jsonify({'error': 'No image file found in the request'}), 400
+        if 'filter' not in request.form:
+            return jsonify({'error': 'No filter specified in the request'}), 400
 
-        # Apply the selected filter
+        file = request.files['image']
+        filter_type = request.form['filter']
+        img = ImageOps.exif_transpose(Image.open(file.stream))
         filtered_img = apply_filter(img, filter_type)
 
-        # Save the processed image to a BytesIO object
         img_io = io.BytesIO()
-        original_format = filtered_img.format or "JPEG"
-        filtered_img.save(img_io, format=original_format)
+        filtered_img.save(img_io, format="JPEG")
         img_io.seek(0)
 
-        # Return the processed image
-        return send_file(img_io, mimetype=f'image/{original_format.lower()}')
+        return send_file(img_io, mimetype='image/jpeg')
     except Exception as e:
+        print('Error processing request:', str(e))
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':

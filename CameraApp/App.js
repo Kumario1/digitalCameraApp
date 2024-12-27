@@ -72,7 +72,7 @@ export default function App() {
       if (photo && photo.uri) {
         setOriginalImage(photo.uri)
         setImage(photo.uri); // Update state with valid image URI
-        console.log('Photo URI:', photo.uri);
+        console.log('originalImage:', originalImage);
       }
     }
   }
@@ -128,42 +128,35 @@ export default function App() {
 
       async function applyFilter(filterType) {
         if (!originalImage) {
-          alert('No image available to apply filter!');
-          return;
+            alert('No image available to apply filter!');
+            return;
         }
-      
+    
         try {
-          const formData = new FormData();
-          formData.append('image', {
-            uri: originalImage,          // Use the image URI from the cache
-            name: 'photo.jpg',   // Give it a file name
-            type: 'image/jpeg',  // Set the MIME type
+          const response = await fetch('https://calm-temple-79066.herokuapp.com/apply-filter', {
+              method: 'POST',
+              body: formData,
           });
-          formData.append('filter', filterType); // The filter type (e.g., "grayscale")
       
-          const response = await fetch('http://192.168.86.31:5000/apply-filter', {
-            method: 'POST',
-            body: formData,
-          });
+          const result = await response.text(); // Log raw response for debugging
+          console.log('Backend response:', result);
       
           if (!response.ok) {
-            throw new Error(`Failed to apply filter: ${response.statusText}`);
+              throw new Error(`Failed to apply filter: ${response.statusText}`);
           }
       
-          // Get the processed image from the server
           const blob = await response.blob();
-
-          // Convert the blob to a local URI for React Native
           const reader = new FileReader();
           reader.onloadend = () => {
-            setImage(reader.result); // Update the state with the filtered image URI
+              setImage(reader.result);
           };
           reader.readAsDataURL(blob);
-        } catch (error) {
+      } catch (error) {
           console.error('Error applying filter:', error);
-          alert('Failed to apply filter. Please try again.');
-        }
+          alert(`Failed to apply filter: ${error.message}`);
       }
+    }
+    
       
       
 
