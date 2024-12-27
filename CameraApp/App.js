@@ -133,9 +133,6 @@ export default function App() {
         }
     
         try {
-            console.log('Applying filter:', filterType);
-            console.log('Original Image URI:', originalImage);
-    
             const formData = new FormData();
             formData.append('image', {
                 uri: originalImage,
@@ -144,26 +141,36 @@ export default function App() {
             });
             formData.append('filter', filterType);
     
-            const response = await fetch('https://calm-temple-79066.herokuapp.com/apply-filter', {
+            const response = await fetch('https://calm-temple-79066-c82f4f7061c5.herokuapp.com/apply-filter', {
                 method: 'POST',
                 body: formData,
             });
+    
+            const contentType = response.headers.get('content-type');
+            console.log('Content-Type:', contentType);
     
             if (!response.ok) {
                 throw new Error(`Failed to apply filter: ${response.statusText}`);
             }
     
-            const blob = await response.blob();
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImage(reader.result);
-            };
-            reader.readAsDataURL(blob);
+            if (contentType.startsWith('application/json')) {
+                const errorData = await response.json();
+                console.error('Error Response:', errorData);
+                alert(`Error: ${errorData.error}`);
+            } else {
+                const blob = await response.blob();
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImage(reader.result);
+                };
+                reader.readAsDataURL(blob);
+            }
         } catch (error) {
             console.error('Error applying filter:', error);
             alert(`Failed to apply filter: ${error.message}`);
         }
     }
+    
     
     
       

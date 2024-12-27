@@ -446,29 +446,41 @@ def apply_filter(img, filter_type):
     except Exception as e:
         raise e
 
+from flask import Flask, request, jsonify, send_file
+from PIL import Image, ImageOps
+import io
+
+app = Flask(__name__)
+
 @app.route('/apply-filter', methods=['POST'])
-def upload_and_filter():
+def apply_filter():
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image file found in the request'}), 400
+    if 'filter' not in request.form:
+        return jsonify({'error': 'No filter specified in the request'}), 400
+
+    file = request.files['image']
+    filter_type = request.form['filter']
+
     try:
-        print('Request received:', request.files, request.form)
-        if 'image' not in request.files:
-            return jsonify({'error': 'No image file found in the request'}), 400
-        if 'filter' not in request.form:
-            return jsonify({'error': 'No filter specified in the request'}), 400
+        # Open the image and apply the filter
+        img = Image.open(file.stream)
+        if filter_type == 'sepia':
+            img = ImageOps.colorize(ImageOps.grayscale(img), '#704214', '#C0A080')
+        elif filter_type == 'grayscale':
+            img = ImageOps.grayscale(img)
+        else:
+            return jsonify({'error': 'Unsupported filter type'}), 400
 
-        file = request.files['image']
-        filter_type = request.form['filter']
-        img = ImageOps.exif_transpose(Image.open(file.stream))
-        filtered_img = apply_filter(img, filter_type)
-
+        # Save the processed image to a buffer
         img_io = io.BytesIO()
-        filtered_img.save(img_io, format="JPEG")
+        img.save(img_io, format='JPEG')
         img_io.seek(0)
 
+        # Return the processed image
         return send_file(img_io, mimetype='image/jpeg')
     except Exception as e:
-        print('Error processing request:', str(e))
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
