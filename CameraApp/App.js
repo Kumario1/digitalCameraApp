@@ -133,29 +133,38 @@ export default function App() {
         }
     
         try {
-          const response = await fetch('https://calm-temple-79066.herokuapp.com/apply-filter', {
-              method: 'POST',
-              body: formData,
-          });
-      
-          const result = await response.text(); // Log raw response for debugging
-          console.log('Backend response:', result);
-      
-          if (!response.ok) {
-              throw new Error(`Failed to apply filter: ${response.statusText}`);
-          }
-      
-          const blob = await response.blob();
-          const reader = new FileReader();
-          reader.onloadend = () => {
-              setImage(reader.result);
-          };
-          reader.readAsDataURL(blob);
-      } catch (error) {
-          console.error('Error applying filter:', error);
-          alert(`Failed to apply filter: ${error.message}`);
-      }
+            console.log('Applying filter:', filterType);
+            console.log('Original Image URI:', originalImage);
+    
+            const formData = new FormData();
+            formData.append('image', {
+                uri: originalImage,
+                name: 'photo.jpg',
+                type: 'image/jpeg',
+            });
+            formData.append('filter', filterType);
+    
+            const response = await fetch('https://calm-temple-79066.herokuapp.com/apply-filter', {
+                method: 'POST',
+                body: formData,
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Failed to apply filter: ${response.statusText}`);
+            }
+    
+            const blob = await response.blob();
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImage(reader.result);
+            };
+            reader.readAsDataURL(blob);
+        } catch (error) {
+            console.error('Error applying filter:', error);
+            alert(`Failed to apply filter: ${error.message}`);
+        }
     }
+    
     
       
       
