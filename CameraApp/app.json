@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "CameraApp",
-    "slug": "CameraApp",
+    "name": "TheDigiCam",
+    "slug": "TheDigiCam",
     "description": "This app allows users to achieve the digital camera effect without actually owning one along with multiple other customizable filters. Developed by Prince Kumar (Frontend and Backend), Visshwa Balasubramanian (Debugging and Frontend), Anvay Todkar (Figma Design and Frontend).",
     "version": "1.0.0",
     "orientation": "portrait",
