@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Button, TouchableOpacity, Image, Alert} from 'react-native';
-import { CameraView, CameraType, useCameraPermissions}  from 'expo-camera';
+import { CameraView, useCameraPermissions}  from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import React, {useState, useEffect, useRef} from 'react';
 import FilterBar from './FilterBar';
@@ -18,7 +18,6 @@ export default function App() {
   const [raw, setRaw] = useState(false)
   const [live, setLive] = useState('off')
   const cameraRef = useRef(null);
-  const [albums, setAlbums] = useState(null)
   const [permissionResponse, requestPermissions] = MediaLibrary.usePermissions();
   const [previewThumnail, setPreviewThumbnail] = useState(null);
 
@@ -338,7 +337,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'gray',
     marginRight: '10%',
-    marginTop: '20%',
+    marginTop: '-15%',
   },
   pictureButton: {
     width: 95,
@@ -346,8 +345,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#000',
-    marginTop: '5%',
-    marginRight: '33%',
+    marginTop: '-5%',
+    marginRight: '32%',
   },
   upArrowButton: {
     position: 'absolute',
@@ -403,11 +402,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     position: 'absolute',
-    bottom: '0%',
+    bottom: '-2%',
     width: '100%',
     alignSelf: 'center',
     backgroundColor: '#000',
     paddingVertical: 10,
-    height: '25%'
+    height: '25%',
   },
 });

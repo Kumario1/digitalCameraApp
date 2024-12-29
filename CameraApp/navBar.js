@@ -1,6 +1,5 @@
 import React from 'react';
-import {View, FlatList, StyleSheet, Text, StatusBar, ScrollView, Touchable, TouchableOpacity, SafeAreaView, SafeAreaProvider} from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import {View, StyleSheet, Text, ScrollView, TouchableOpacity} from 'react-native';
 
 export default function navBar({applyFilter}) {
     const filters = ['digicam', 'sepia', 'invert', 'brightness', 'contrast', 'saturate'];

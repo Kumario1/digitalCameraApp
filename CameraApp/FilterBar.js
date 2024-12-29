@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View,TouchableOpacity, Button} from 'react-native';
+import { StyleSheet, View,TouchableOpacity} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function FilterBar({onSave, resetImg}) {
@@ -16,21 +16,21 @@ export default function FilterBar({onSave, resetImg}) {
 
 const styles = StyleSheet.create({
     sidebar: {
-        position: 'absolute', // Place the sidebar relative to the parent container
-        bottom: "88%",            // Stick it to the bottom of the screen
+        position: 'absolute',
+        bottom: "88%",            
         height: 110,
-        width: '100%',        // Make it span the entire width
-        backgroundColor: '#3333', // Background color for the bar
-        padding: 10,          // Add padding for better spacing
-        flexDirection: 'row', // Arrange buttons horizontally
-        justifyContent: 'space-around', // Space out buttons evenly
+        width: '100%',        
+        backgroundColor: '#3333', 
+        padding: 10,          
+        flexDirection: 'row',
+        justifyContent: 'space-around', 
     },
     button: {
         left: "63%",
         top: "54%",
         paddingVertical: 10,
         paddingHorizontal: 20,
-        borderRadius: 5,         // Rounded corners for buttons
+        borderRadius: 5,         
         height: 60,
         opacity: .9,
     },
@@ -40,10 +40,10 @@ const styles = StyleSheet.create({
         opacity: .9,
     },
     text: {
-        color: 'white',          // Text color
-        fontSize: 16,            // Font size
-        fontWeight: 'bold',      // Bold text
-        textAlign: 'center',     // Center-align text
+        color: 'white',          
+        fontSize: 16,            
+        fontWeight: 'bold',      
+        textAlign: 'center',     
     },
 });
 
