@@ -51,13 +51,11 @@
         </dict>
     </dict>
     <key>NSCameraUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your camera</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your microphone</string>
+    <string>The DigiCam requires access to your camera to capture photos and apply filters in real-time. Allow TheDigiCam to access your camera</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to save photos</string>
+    <string>The DigiCam needs permission to save edited or captured photos to your photo library for future access. Allow TheDigiCam to save photos</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your photos</string>
+    <string>The DigiCam requires access to your photo library to allow you to edit and apply filters to your existing photos. Allow TheDigiCam to access your photos</string>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>

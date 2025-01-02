@@ -34,8 +34,8 @@ export default function App() {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <Text style={styles.message}>Hello! We need your Camera permissions to allow you to take pictures in the App. Without thse permissions the app won't function properly.</Text>
+        <Button onPress={requestPermission} title="Allow Access to Camera" />
       </View>
     );
   }
@@ -47,8 +47,8 @@ export default function App() {
   if (!permissionResponse.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermissions} title="grant permission" />
+        <Text style={styles.message}>We need your Library permissions to access your photo libraries to allow the app to save the pictures you take, and view the photos you have taken in the app so far.</Text>
+        <Button onPress={requestPermissions} title="Allow Acess to Photo Library" />
       </View>
     );
   }
@@ -267,7 +267,7 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.containerCam}>
       {image ? (
         <View style={styles.previewContainer}>
           <Image source={{ uri: image }} style={styles.preview} />
@@ -330,6 +330,9 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  message: {
+    padding: 10,
+  },
   previewThumnailView: {
     width: 60,
     height: 55,
@@ -376,9 +379,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: '#000',
   },
-  container: {
+  containerCam: {
     flex: 1,
     backgroundColor: '#000',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   flipButton: {
     position: 'absolute',
