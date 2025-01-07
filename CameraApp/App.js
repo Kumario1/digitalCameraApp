@@ -20,6 +20,7 @@ export default function App() {
   const cameraRef = useRef(null);
   const [permissionResponse, requestPermissions] = MediaLibrary.usePermissions();
   const [previewThumnail, setPreviewThumbnail] = useState(null);
+  const [imgLoading, setimgLoading] = useState(false);
 
   useEffect(() => {
     if(permission && permission.granted && permissionResponse && permissionResponse.granted){
@@ -218,8 +219,9 @@ export default function App() {
     }
   
     try {
+      setimgLoading(true);
+
       const { width: originalWidth, height: originalHeight } = await getImageSize(originalImage);
-  
       const newWidth = 1280;
       const aspectRatio = originalHeight / originalWidth;
       const newHeight = Math.round(newWidth * aspectRatio);
@@ -263,6 +265,8 @@ export default function App() {
     } catch (error) {
       console.error('Error applying filter:', error);
       alert('Failed to apply filter. Please try again.');
+    } finally {
+      setimgLoading(false);
     }
   }
 
@@ -270,6 +274,7 @@ export default function App() {
     <View style={styles.containerCam}>
       {image ? (
         <View style={styles.previewContainer}>
+          {imgLoading && <Text style={styles.loadingText}>Loading... Please wait!</Text>}
           <Image source={{ uri: image }} style={styles.preview} />
           <FilterBar 
             onSave={savePicture}
@@ -277,7 +282,7 @@ export default function App() {
           />
           <NavBar
             applyFilter={applyFilter}
-          />
+          />  
         </View>
       ) : (
         <>
@@ -330,6 +335,24 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  loadingText:{
+    position: 'absolute',
+    top: '50%',
+    left: '22%',
+    transform: [{ translateX: '-50%' }, { translateY: '-50%' }],
+    color: 'gray',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    pointerEvents: 'none',
+    zIndex: 10,
+  },
   message: {
     padding: 10,
   },
