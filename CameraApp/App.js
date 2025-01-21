@@ -282,6 +282,7 @@ export default function App() {
           />
           <NavBar
             applyFilter={applyFilter}
+            originalImage={originalImage}
           />  
         </View>
       ) : (
